@@ -1,4 +1,4 @@
-namespace ProvaAdmissionalApisul.Models
+namespace ProvaAdmissionalCSharpApisul.Models
 {
     /// <summary>
     /// Enumeração para representar os diferentes elevadores do prédio.

@@ -1,4 +1,7 @@
-namespace ProvaAdmissionalApisul.Models
+using System.Text.Json.Serialization;
+using System.Collections.Generic;
+
+namespace ProvaAdmissionalCSharpApisul.Models
 {
     /// <summary>
     /// Representa a estrutura de um único registro conforme definido no arquivo input.json.
@@ -19,13 +22,13 @@ namespace ProvaAdmissionalApisul.Models
         /// Mapeado da propriedade "elevador" no JSON.
         /// </summary>
         [JsonPropertyName("elevador")]
-        public string Elevador { get; set; } // Mantido como string para corresponder ao JSON
+        public string? Elevador { get; set; } // Mantido como string para corresponder ao JSON
 
         /// <summary>
         /// O período em que o elevador foi utilizado (representado como string no JSON: "M", "V", "N").
         /// Mapeado da propriedade "turno" no JSON.
         /// </summary>
         [JsonPropertyName("turno")]
-        public string Turno { get; set; } // Mantido como string para corresponder ao JSON
+        public string? Turno { get; set; } // Mantido como string para corresponder ao JSON
     }
 }
