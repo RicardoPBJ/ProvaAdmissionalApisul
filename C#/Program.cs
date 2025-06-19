@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text.Json; // Para JsonSerializer
 using ProvaAdmissionalCSharpApisul.Models;
-using ProvaAdmissionalCSharpApisul;
+using ProvaAdmissionalCSharpApisul.Services;
+using ProvaAdmissionalCSharpApisul.Controllers;
 
 public class Program
 {
@@ -13,8 +14,8 @@ public class Program
     /// </summary>
     public static void Main(string[] args)
     {
+        Console.WriteLine("------------------------------------------------------------\n");
         Console.WriteLine("Sistema de Análise de Uso de Elevadores - Prova Admissional Apisul");
-        Console.WriteLine("------------------------------------------------------------");
 
         // Caminho para o arquivo de entrada JSON.
         string jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "input.json");
@@ -44,47 +45,15 @@ public class Program
         }
 
         // Cria uma instância do serviço de elevadores com os dados processados
-        IElevadorService elevadorService = new ElevadorService(dadosDeUsoProcessados);
+        IElevadorService elevadorService = new ElevadorService(dadosDeUsoProcessados); // Usa a classe do namespace ProvaAdmissionalCSharpApisul
 
         Console.WriteLine($"\n{dadosDeUsoProcessados.Count} registros de uso carregados e processados.");
 
-        // Testando o método andarMenosUtilizado()
-        List<int> andaresMenosUtilizados = elevadorService.andarMenosUtilizado();
-        Console.WriteLine("\n--- Resultados ---\n");
-        Console.WriteLine($"a) Andar menos utilizado: {string.Join(", ", andaresMenosUtilizados)}");
+        // Cria uma instância do controller, passando o serviço
+        IElevadorController elevadorController = new ElevadorController(elevadorService);
 
-        // Testando o método elevadorMaisFrequentado()
-        List<char> elevadoresMaisFrequentados = elevadorService.elevadorMaisFrequentado();
-        Console.WriteLine($"b) Elevador mais frequentado: {string.Join(", ", elevadoresMaisFrequentados)}");
-
-        // Testando o método periodoMaiorFluxoElevadorMaisFrequentado()
-        List<char> periodosMaiorFluxo = elevadorService.periodoMaiorFluxoElevadorMaisFrequentado();
-        Console.WriteLine($"c) Período de maior fluxo do elevador mais frequentado: {string.Join(", ", periodosMaiorFluxo)}");
-
-        // Testando o método elevadorMenosFrequentado()
-        List<char> elevadoresMenosFrequentados = elevadorService.elevadorMenosFrequentado();
-        Console.WriteLine($"d) Elevador menos frequentado: {string.Join(", ", elevadoresMenosFrequentados)}");
-
-        // Testando o método periodoMenorFluxoElevadorMenosFrequentado()
-        List<char> periodosMenorFluxo = elevadorService.periodoMenorFluxoElevadorMenosFrequentado();
-        Console.WriteLine($"e) Período de menor fluxo do elevador menos frequentado: {string.Join(", ", periodosMenorFluxo)}");
-
-        // Testando o método periodoMaiorUtilizacaoConjuntoElevadores()
-        List<char> periodoMaiorUtilizacao = elevadorService.periodoMaiorUtilizacaoConjuntoElevadores();
-        Console.WriteLine($"f) Período de maior utilização do conjunto de elevadores: {string.Join(", ", periodoMaiorUtilizacao)}");
-
-        // Testando os métodos de percentual de uso por elevador
-        Console.WriteLine("\ng) Percentual de uso de cada elevador:");
-        float percA = elevadorService.percentualDeUsoElevadorA();
-        float percB = elevadorService.percentualDeUsoElevadorB();
-        float percC = elevadorService.percentualDeUsoElevadorC();
-        float percD = elevadorService.percentualDeUsoElevadorD();
-        float percE = elevadorService.percentualDeUsoElevadorE();
-        Console.WriteLine($"   - Elevador A: {percA:F2}%"); // :F2 formata para 2 casas decimais
-        Console.WriteLine($"   - Elevador B: {percB:F2}%");
-        Console.WriteLine($"   - Elevador C: {percC:F2}%");
-        Console.WriteLine($"   - Elevador D: {percD:F2}%");
-        Console.WriteLine($"   - Elevador E: {percE:F2}%");
+        // Pede ao controller para exibir a análise completa
+        elevadorController.ExibirAnaliseCompleta();
         Console.WriteLine("\n------------------------------------------------------------");
     }
 
