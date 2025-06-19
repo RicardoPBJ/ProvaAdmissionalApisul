@@ -1,10 +1,24 @@
 using System;
-
+using System.Collections.Generic;
+using ProvaAdmissionalCSharpApisul.Interfaces;
+using ProvaAdmissionalCSharpApisul.Models;
 
 namespace ProvaAdmissionalCSharpApisul
 {
   public class ElevadorService : IElevadorService
   {
+    // Campo privado para armazenar a lista de usos de elevadores
+    private readonly List<UsoElevador> _usosElevadores;
+
+    /// <summary>
+    /// Construtor da classe ElevadorService.
+    /// Recebe a lista de usos de elevadores (já convertida do JSON) e a armazena internamente.
+    /// </summary>
+    /// <param name="usosElevadores">A lista de usos de elevadores processados.</param>
+    public ElevadorService(List<UsoElevador> usosElevadores)
+    {
+        _usosElevadores = usosElevadores ?? new List<UsoElevador>(); // Se a lista for nula, inicializa com uma lista vazia para evitar erros futuros.
+    }
     public List<int> andarMenosUtilizado()
     {
       // Implementação do método
