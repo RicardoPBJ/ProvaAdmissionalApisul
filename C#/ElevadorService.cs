@@ -193,10 +193,28 @@ namespace ProvaAdmissionalCSharpApisul
       return [.. periodosDeMenorFluxo.OrderBy(c => c)];
     }
 
+    /// <inheritdoc />
     public List<char> periodoMaiorUtilizacaoConjuntoElevadores()
     {
-      // Implementação do método
-      throw new NotImplementedException();
+      // Se não houver dados de uso, retorna uma lista vazia.
+      if (_usosElevadores.Count == 0)
+      {
+        return [];
+      }
+
+      // Agrupa todos os usos por período e conta a frequência de cada um.
+      var contagemPorPeriodo = _usosElevadores
+          .GroupBy(uso => uso.Periodo) // Agrupa pela propriedade Periodo (nosso enum Models.Periodo)
+          .Select(grupo => new { Periodo = grupo.Key, Contagem = grupo.Count() }) //ex: [{ Periodo.Manha, Contagem = 10 }, ...]
+          .ToList();
+
+      // Encontra a maior contagem de uso entre os períodos.
+      int maxContagem = contagemPorPeriodo.Max(item => item.Contagem);
+
+      // Seleciona os períodos que têm essa contagem máxima, converte para char e ordena.
+      return [.. contagemPorPeriodo.Where(item => item.Contagem == maxContagem)
+                                .Select(item => item.Periodo.ToString()[0]) // Converte o enum Periodo para char
+                                .OrderBy(c => c)];
     }
 
     public float percentualDeUsoElevadorA()
