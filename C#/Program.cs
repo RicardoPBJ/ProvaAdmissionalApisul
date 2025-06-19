@@ -73,6 +73,18 @@ public class Program
         List<char> periodoMaiorUtilizacao = elevadorService.periodoMaiorUtilizacaoConjuntoElevadores();
         Console.WriteLine($"f) Período de maior utilização do conjunto de elevadores: {string.Join(", ", periodoMaiorUtilizacao)}");
 
+        // Testando os métodos de percentual de uso por elevador
+        Console.WriteLine("\ng) Percentual de uso de cada elevador:");
+        float percA = elevadorService.percentualDeUsoElevadorA();
+        float percB = elevadorService.percentualDeUsoElevadorB();
+        float percC = elevadorService.percentualDeUsoElevadorC();
+        float percD = elevadorService.percentualDeUsoElevadorD();
+        float percE = elevadorService.percentualDeUsoElevadorE();
+        Console.WriteLine($"   - Elevador A: {percA:F2}%"); // :F2 formata para 2 casas decimais
+        Console.WriteLine($"   - Elevador B: {percB:F2}%");
+        Console.WriteLine($"   - Elevador C: {percC:F2}%");
+        Console.WriteLine($"   - Elevador D: {percD:F2}%");
+        Console.WriteLine($"   - Elevador E: {percE:F2}%");
         Console.WriteLine("\n------------------------------------------------------------");
     }
 

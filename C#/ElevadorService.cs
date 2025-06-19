@@ -217,34 +217,62 @@ namespace ProvaAdmissionalCSharpApisul
                                 .OrderBy(c => c)];
     }
 
+    /// <summary>
+    /// Método auxiliar para calcular o percentual de uso de um elevador específico.
+    /// </summary>
+    /// <param name="elevador">O enum Models.Elevador para o qual calcular o percentual.</param>
+    /// <returns>O percentual de uso como float.</returns>
+    private float CalcularPercentual(Elevador elevador)
+    {
+        // Se não houver dados de uso, o percentual é 0.
+        if (_usosElevadores.Count == 0)
+        {
+            return 0.0f;
+        }
+
+        float totalUsos = _usosElevadores.Count;
+        
+        // Evita divisão por zero, embora _usosElevadores.Count == 0 já trate a maioria dos casos.
+        if (totalUsos == 0)
+        {
+            return 0.0f;
+        }
+
+        // Conta quantos usos são para o elevador específico.
+        float usosDoElevador = _usosElevadores.Count(u => u.Elevador == elevador);
+
+        // Calcula o percentual. Multiplica por 100.0f para garantir que o resultado seja float.
+        return usosDoElevador / totalUsos * 100.0f;
+    }
+
+    /// <inheritdoc />
     public float percentualDeUsoElevadorA()
     {
-      // Implementação do método
-      throw new NotImplementedException();
+      return CalcularPercentual(Elevador.A);
     }
 
+    /// <inheritdoc />
     public float percentualDeUsoElevadorB()
     {
-      // Implementação do método
-      throw new NotImplementedException();
+      return CalcularPercentual(Elevador.B);
     }
 
+    /// <inheritdoc />
     public float percentualDeUsoElevadorC()
     {
-      // Implementação do método
-      throw new NotImplementedException();
+      return CalcularPercentual(Elevador.C);
     }
 
+    /// <inheritdoc />
     public float percentualDeUsoElevadorD()
     {
-      // Implementação do método
-      throw new NotImplementedException();
+      return CalcularPercentual(Elevador.D);
     }
 
+    /// <inheritdoc />
     public float percentualDeUsoElevadorE()
     {
-      // Implementação do método
-      throw new NotImplementedException();
+      return CalcularPercentual(Elevador.E);
     }
   }
 
