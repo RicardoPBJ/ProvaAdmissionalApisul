@@ -52,9 +52,14 @@ public class Program
         List<int> andaresMenosUtilizados = elevadorService.andarMenosUtilizado();
         Console.WriteLine("\n--- Resultados ---\n");
         Console.WriteLine($"a) Andar menos utilizado: {string.Join(", ", andaresMenosUtilizados)}");
+
         // Testando o método elevadorMaisFrequentado()
         List<char> elevadoresMaisFrequentados = elevadorService.elevadorMaisFrequentado();
         Console.WriteLine($"b) Elevador mais frequentado: {string.Join(", ", elevadoresMaisFrequentados)}");
+
+        // Testando o método periodoMaiorFluxoElevadorMaisFrequentado()
+        List<char> periodosMaiorFluxo = elevadorService.periodoMaiorFluxoElevadorMaisFrequentado();
+        Console.WriteLine($"c) Período de maior fluxo do elevador mais frequentado: {string.Join(", ", periodosMaiorFluxo)}");
 
         Console.WriteLine("\n------------------------------------------------------------");
     }

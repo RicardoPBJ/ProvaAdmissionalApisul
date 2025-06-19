@@ -79,10 +79,43 @@ namespace ProvaAdmissionalCSharpApisul
                                 .OrderBy(c => c)];
     }
 
+    /// <inheritdoc />
     public List<char> periodoMaiorFluxoElevadorMaisFrequentado()
     {
-      // Implementação do método
-      throw new NotImplementedException();
+      // Lista de caracteres dos elevadores mais frequentados.
+      List<char> elevadoresMaisFrequentados = elevadorMaisFrequentado();
+
+      // Se não houver elevadores mais frequentados, retorna lista vazia.
+      if (elevadoresMaisFrequentados.Count == 0)
+      {
+        return [];
+      }
+
+      // Converte os caracteres de volta para nosso enum Models.Elevador para facilitar a filtragem. ex: ['A', 'B'] -> [Elevador.A, Elevador.B]
+      List<Elevador> elevadoresMaisFreqEnums = [.. elevadoresMaisFrequentados.Select(c => Enum.Parse<Elevador>(c.ToString(), true))];
+
+      var periodosDePico = new HashSet<char>(); // Um objeto vazio com HashSet para evitar duplicatas.
+
+      // Analisa cada elevador mais frequentado.
+      foreach (var elevadorEnum in elevadoresMaisFreqEnums)
+      {
+        var usosDoElevadorEspecifico = _usosElevadores.Where(u => u.Elevador == elevadorEnum);
+
+        var contagemPorPeriodo = usosDoElevadorEspecifico
+            .GroupBy(u => u.Periodo) //ex: Agrupa os usos por período { Periodo.Manha: {UsoElevador, UsoElevador, ... }, ...}
+            .Select(g => new { Periodo = g.Key, Contagem = g.Count() }) // ex: [{ Periodo.Manha, Contagem = 10 }, { Periodo.Tarde, Contagem = 15 }, ...]
+            .ToList();
+        
+        if (contagemPorPeriodo.Count == 0) continue;
+
+        int maxContagemPeriodo = contagemPorPeriodo.Max(p => p.Contagem); // Encontra a maior contagem de uso para o elevador atual.
+        contagemPorPeriodo.Where(p => p.Contagem == maxContagemPeriodo) // ex: { Periodo = Periodo.Tarde, Contagem = 15 }
+                          .Select(p => p.Periodo.ToString()[0]) // Converte Models.Periodo para char
+                          .ToList()
+                          .ForEach(c => periodosDePico.Add(c)); //ex: { 'T' }
+      }
+      // Ordena e retorna a lista de períodos de pico.
+      return [.. periodosDePico.OrderBy(c => c)];
     }
 
     public List<char> elevadorMenosFrequentado()
