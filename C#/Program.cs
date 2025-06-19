@@ -50,8 +50,11 @@ public class Program
 
         // Testando o método andarMenosUtilizado()
         List<int> andaresMenosUtilizados = elevadorService.andarMenosUtilizado();
-        Console.WriteLine("\n--- Resultados ---");
+        Console.WriteLine("\n--- Resultados ---\n");
         Console.WriteLine($"a) Andar menos utilizado: {string.Join(", ", andaresMenosUtilizados)}");
+        // Testando o método elevadorMaisFrequentado()
+        List<char> elevadoresMaisFrequentados = elevadorService.elevadorMaisFrequentado();
+        Console.WriteLine($"b) Elevador mais frequentado: {string.Join(", ", elevadoresMaisFrequentados)}");
 
         Console.WriteLine("\n------------------------------------------------------------");
     }

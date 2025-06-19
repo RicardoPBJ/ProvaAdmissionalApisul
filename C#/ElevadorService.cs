@@ -28,40 +28,55 @@ namespace ProvaAdmissionalCSharpApisul
     public List<int> andarMenosUtilizado()
     {
       // Se não houver dados de uso, todos os andares (0-15) são considerados "menos utilizados".
-      if (!_usosElevadores.Any())
+      if (_usosElevadores.Count == 0)
       {
-        return Enumerable.Range(0, TotalAndares).ToList();
+        return [.. Enumerable.Range(0, TotalAndares)];
       }
 
       // Inicializa um dicionário para contar o uso de cada andar.
       // Todos os andares de 0 a 15 começam com 0 usos.
       var contagemUsoPorAndar = Enumerable.Range(0, TotalAndares).ToDictionary(andar => andar, andar => 0);
-      Console.WriteLine("Contagem de uso por andar inicializada com 0 para todos os andares.", contagemUsoPorAndar);
 
       //Contabiliza os usos reais de cada andar.
       foreach (var uso in _usosElevadores)
       {
         // Verifica se o andar do registro é válido (0-15) antes de tentar acessar o dicionário.
-        // Embora o dicionário já contenha todos os andares, esta é uma boa prática de defesa.
         if (contagemUsoPorAndar.ContainsKey(uso.Andar))
         {
           contagemUsoPorAndar[uso.Andar]++;
         }
       }
-        //Encontra a menor contagem de uso entre todos os andares.
-        int menorContagem = contagemUsoPorAndar.Values.Min();
-
-        //Seleciona todos os andares que têm essa menor contagem e os ordena.
-        return contagemUsoPorAndar.Where(par => par.Value == menorContagem)
-                                  .Select(par => par.Key)
-                                  .OrderBy(andar => andar)
-                                  .ToList();
+      //Encontra a menor contagem de uso entre todos os andares.
+      int menorContagem = contagemUsoPorAndar.Values.Min();
+        
+      //Seleciona todos os andares que têm essa menor contagem e os ordena.
+      return [.. contagemUsoPorAndar.Where(par => par.Value == menorContagem) // exemplo: [{0, 2}, {1, 2}, ...]
+                                  .Select(par => par.Key) // ex: [0, 1, ...] (os andares)
+                                  .OrderBy(andar => andar)];
     }
 
+    /// <inheritdoc />
     public List<char> elevadorMaisFrequentado()
     {
-      // Implementação do método
-      throw new NotImplementedException();
+      // Se não houver dados de uso, retorna uma lista vazia.
+      if (_usosElevadores.Count == 0)
+      {
+        return [];
+      }
+
+      // Agrupa os usos por elevador e conta a frequência de cada um. ex: [{ Elevador.A, Contagem = 5 }]
+      var contagemPorElevador = _usosElevadores
+          .GroupBy(uso => uso.Elevador) // Agrupa pela propriedade Elevador (enum Models.Elevador) ex: [{Elevador.A, ...usos}]
+          .Select(grupo => new { Elevador = grupo.Key, Contagem = grupo.Count() })
+          .ToList();
+
+      // Encontra a maior contagem de uso.
+      int maxContagem = contagemPorElevador.Max(item => item.Contagem);
+
+      // Seleciona os elevadores que têm essa contagem máxima, converte para char e ordena.
+      return [.. contagemPorElevador.Where(item => item.Contagem == maxContagem) // Filtra pelos mais frequentes
+                                .Select(item => item.Elevador.ToString()[0]) // Converte o enum Elevador para char (ex: Elevador.A -> "A" -> 'A')
+                                .OrderBy(c => c)];
     }
 
     public List<char> periodoMaiorFluxoElevadorMaisFrequentado()
