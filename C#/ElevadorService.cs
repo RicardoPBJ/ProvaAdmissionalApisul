@@ -118,10 +118,34 @@ namespace ProvaAdmissionalCSharpApisul
       return [.. periodosDePico.OrderBy(c => c)];
     }
 
+    /// <inheritdoc />
     public List<char> elevadorMenosFrequentado()
     {
-      // Implementação do método
-      throw new NotImplementedException();
+      // Obtém todos os elevadores definidos no enum Models.Elevador.
+      var todosOsElevadores = Enum.GetValues<Elevador>();
+
+      // Se não houver dados de uso, todos os elevadores são "menos frequentados" com 0 usos.
+      if (_usosElevadores.Count == 0)
+      {
+        return [.. todosOsElevadores.Select(e => e.ToString()[0]).OrderBy(c => c)]; // ex: ['A', 'B', 'C', 'D', 'E']
+      }
+
+      // Contabiliza os usos para cada elevador, incluindo aqueles com 0 usos.
+      var contagemPorElevador = todosOsElevadores
+          .Select(elevador => new
+          {
+            Elevador = elevador,
+            Contagem = _usosElevadores.Count(uso => uso.Elevador == elevador)
+          }) // ex: [{ Elevador.A, Contagem = 5 }, { Elevador.B, Contagem = 3 }, ...]
+          .ToList();
+
+      // Encontra a menor contagem de uso.
+      int minContagem = contagemPorElevador.Min(item => item.Contagem);
+
+      // Seleciona os elevadores que têm essa contagem mínima, converte para char e ordena.
+      return [.. contagemPorElevador.Where(item => item.Contagem == minContagem)
+                                .Select(item => item.Elevador.ToString()[0])
+                                .OrderBy(c => c)];
     }
 
     public List<char> periodoMenorFluxoElevadorMenosFrequentado()

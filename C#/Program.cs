@@ -61,6 +61,11 @@ public class Program
         List<char> periodosMaiorFluxo = elevadorService.periodoMaiorFluxoElevadorMaisFrequentado();
         Console.WriteLine($"c) Período de maior fluxo do elevador mais frequentado: {string.Join(", ", periodosMaiorFluxo)}");
 
+        // Testando o método elevadorMenosFrequentado()
+        List<char> elevadoresMenosFrequentados = elevadorService.elevadorMenosFrequentado();
+        Console.WriteLine($"d) Elevador menos frequentado: {string.Join(", ", elevadoresMenosFrequentados)}");
+
+
         Console.WriteLine("\n------------------------------------------------------------");
     }
 
