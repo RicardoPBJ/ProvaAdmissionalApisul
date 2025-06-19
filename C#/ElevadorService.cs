@@ -148,10 +148,49 @@ namespace ProvaAdmissionalCSharpApisul
                                 .OrderBy(c => c)];
     }
 
+    /// <inheritdoc />
     public List<char> periodoMenorFluxoElevadorMenosFrequentado()
     {
-      // Implementação do método
-      throw new NotImplementedException();
+      // Obtém a lista de caracteres dos elevadores menos frequentados.
+      List<char> elevadoresMenosFreqChars = elevadorMenosFrequentado();
+
+      // Se não houver elevadores menos frequentados, retorna lista vazia.
+      if (elevadoresMenosFreqChars.Count == 0)
+      {
+        return [];
+      }
+
+      // Converte os caracteres de volta para nosso enum Models.Elevador.
+      List<Elevador> elevadoresMenosFreqEnums = [.. elevadoresMenosFreqChars.Select(c => Enum.Parse<Elevador>(c.ToString(), true))];
+
+      var periodosDeMenorFluxo = new HashSet<char>();
+
+      var todosOsPeriodos = Enum.GetValues<Periodo>(); // Obtém M, V, N
+
+      // Analisa cada elevador menos frequentado.
+      foreach (var elevadorEnum in elevadoresMenosFreqEnums)
+      {
+        // Filtra os usos apenas para o elevador atual.
+        var usosDoElevadorEspecifico = _usosElevadores.Where(u => u.Elevador == elevadorEnum).ToList();
+
+        // Contabiliza os usos para cada período (M, V, N), incluindo períodos com 0 usos para este elevador.
+        var contagemPorPeriodo = todosOsPeriodos
+            .Select(periodo => new
+            {
+              Periodo = periodo,
+              Contagem = usosDoElevadorEspecifico.Count(u => u.Periodo == periodo)
+            })
+            .ToList();
+
+        int minContagemPeriodo = contagemPorPeriodo.Min(p => p.Contagem);
+
+        contagemPorPeriodo.Where(p => p.Contagem == minContagemPeriodo)
+                          .Select(p => p.Periodo.ToString()[0]) // Converte Models.Periodo para char
+                          .ToList()
+                          .ForEach(c => periodosDeMenorFluxo.Add(c));
+      }
+      // Ordena e retorna a lista de períodos de menor fluxo.
+      return [.. periodosDeMenorFluxo.OrderBy(c => c)];
     }
 
     public List<char> periodoMaiorUtilizacaoConjuntoElevadores()
