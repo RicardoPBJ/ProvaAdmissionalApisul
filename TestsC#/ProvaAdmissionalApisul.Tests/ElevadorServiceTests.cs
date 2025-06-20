@@ -392,6 +392,105 @@ namespace ProvaAdmissionalApisul.Tests
         }
         #endregion
 
+        #region Testes para o método periodoMaiorUtilizacaoConjuntoElevadores
+
+        [Fact]
+        public void PeriodoMaiorUtilizacaoConjuntoElevadores_SemDados_DeveRetornarListaVazia()
+        {
+            // Arrange
+            var dadosDeUso = new List<UsoElevador>();
+            var service = new ElevadorService(dadosDeUso);
+            var periodosEsperados = new List<char>();
+
+            // Act
+            List<char> resultado = service.periodoMaiorUtilizacaoConjuntoElevadores();
+
+            // Assert
+            resultado.Should().BeEquivalentTo(periodosEsperados);
+        }
+
+        [Fact]
+        public void PeriodoMaiorUtilizacaoConjuntoElevadores_ComUmPeriodoMaisUtilizado_DeveRetornarCorreto()
+        {
+            // Arrange
+            var dadosDeUso = new List<UsoElevador>
+            {
+                new UsoElevador { Elevador = Elevador.A, Andar = 1, Periodo = Periodo.M }, // M: 3
+                new UsoElevador { Elevador = Elevador.B, Andar = 2, Periodo = Periodo.M },
+                new UsoElevador { Elevador = Elevador.C, Andar = 3, Periodo = Periodo.M },
+                new UsoElevador { Elevador = Elevador.A, Andar = 1, Periodo = Periodo.V }, // V: 2
+                new UsoElevador { Elevador = Elevador.D, Andar = 2, Periodo = Periodo.V },
+                new UsoElevador { Elevador = Elevador.E, Andar = 1, Periodo = Periodo.N }  // N: 1
+            };
+            var service = new ElevadorService(dadosDeUso);
+            var periodosEsperados = new List<char> { 'M' };
+
+            // Act
+            List<char> resultado = service.periodoMaiorUtilizacaoConjuntoElevadores();
+
+            // Assert
+            resultado.Should().BeEquivalentTo(periodosEsperados);
+        }
+
+        [Fact]
+        public void PeriodoMaiorUtilizacaoConjuntoElevadores_ComEmpateNosPeriodos_DeveRetornarTodosEmpatadosOrdenados()
+        {
+            // Arrange
+            var dadosDeUso = new List<UsoElevador>
+            {
+                new UsoElevador { Elevador = Elevador.A, Andar = 1, Periodo = Periodo.M }, // M: 2
+                new UsoElevador { Elevador = Elevador.B, Andar = 2, Periodo = Periodo.M },
+                new UsoElevador { Elevador = Elevador.C, Andar = 1, Periodo = Periodo.V }, // V: 2
+                new UsoElevador { Elevador = Elevador.D, Andar = 2, Periodo = Periodo.V },
+                new UsoElevador { Elevador = Elevador.E, Andar = 1, Periodo = Periodo.N }  // N: 1
+            };
+            var service = new ElevadorService(dadosDeUso);
+            var periodosEsperados = new List<char> { 'M', 'V' }; // Esperado em ordem alfabética
+
+            // Act
+            List<char> resultado = service.periodoMaiorUtilizacaoConjuntoElevadores();
+
+            // Assert
+            resultado.Should().BeEquivalentTo(periodosEsperados);
+        }
+        #endregion
+
+        #region Testes para os métodos de percentual de uso dos elevadores
+
+        [Theory]
+        [InlineData(0, 0.0f)] // Sem usos, percentual deve ser 0
+        [InlineData(1, 100.0f)] // Apenas 1 uso do elevador A, percentual deve ser 100%
+        [InlineData(2, 100.0f)] // Apenas 2 usos do elevador A
+        [InlineData(3, 66.67f)] // 2 usos de A, 1 de outro, percentual de A = 2/3 * 100
+        [InlineData(4, 50.0f)]  // 2 usos de A, 2 de outros, percentual de A = 2/4 * 100
+        public void PercentualDeUsoElevadores_ComDiferentesUsos_DeveRetornarCorreto(int totalUsos, float percentualEsperado)
+        {
+            // Arrange
+            var dadosDeUso = new List<UsoElevador>();
+            if (totalUsos > 0)
+            {
+                dadosDeUso.Add(new UsoElevador { Elevador = Elevador.A, Andar = 1, Periodo = Periodo.M });
+                if (totalUsos > 1)
+                {
+                    dadosDeUso.Add(new UsoElevador { Elevador = Elevador.A, Andar = 2, Periodo = Periodo.V });
+                }
+                // Adiciona usos de outros elevadores se totalUsos > 2
+                for (int i = 2; i < totalUsos; i++)
+                {
+                    // Alterna entre B, C, D, E para variar os usos
+                    var elevador = (Elevador)((i % 4) + 1); // (i%4) gera 0, 1, 2, 3. +1 mapeia para B, C, D, E (1, 2, 3, 4)
+                    dadosDeUso.Add(new UsoElevador { Elevador = elevador, Andar = i, Periodo = Periodo.N });
+                }
+            }
+            var service = new ElevadorService(dadosDeUso);
+
+            // Act
+            float resultado = service.percentualDeUsoElevadorA();
+
+            // Assert
+            resultado.Should().BeApproximately(percentualEsperado, 0.01f); // Usa precisão de 2 casas decimais
+        }
+        #endregion
     }
     #endregion
 }
